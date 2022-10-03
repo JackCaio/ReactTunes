@@ -17,3 +17,7 @@ code {
   display: flex;
   justify-content: center;
 }
+
+.active__nav {
+  font-weight: 700;
+}
