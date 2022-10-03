@@ -47,7 +47,8 @@ export default class Search extends Component {
     const albumSection = ((albuns.length > 0) ? (
       <>
         <h4>{`Resultado de álbuns de: ${artista}`}</h4>
-        {albuns.map((album, i) => <AlbumComp key={ i } { ...album } />)}
+        {albuns
+          .map((album, i) => <AlbumComp key={ i } { ...album } />)}
       </>
     ) : <h1>Nenhum álbum foi encontrado</h1>);
     return (
