@@ -14,16 +14,16 @@ export default class MusicCard extends Component {
   addFavorite = async () => {
     const { song, favState } = this.props;
     this.setState({ loading: true });
-    favState(song.trackId, 'add');
     await addSong(song);
+    favState(song, 'add');
     this.setState({ loading: false });
   };
 
   removeFavorite = async () => {
     const { song, favState } = this.props;
     this.setState({ loading: true });
-    favState(song.trackId, 'remove');
     await removeSong(song);
+    favState(song, 'remove');
     this.setState({ loading: false });
   };
 

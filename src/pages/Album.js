@@ -40,27 +40,25 @@ export default class Album extends Component {
     });
   };
 
-  addFav = (id) => {
+  addFav = (song) => {
     this.setState((prev) => ({
-      favSongs: [...prev.favSongs, id],
+      favSongs: [...prev.favSongs, song.trackId],
     }));
   };
 
-  rmFav = (id) => {
-    const { favSongs } = this.state;
-    favSongs.splice(favSongs.indexOf(id), 1);
-    this.setState({
-      favSongs,
-    });
+  rmFav = (song) => {
+    this.setState((prev) => ({
+      favSongs: prev.favSongs.filter((sg) => sg !== song.trackId),
+    }));
   };
 
-  favState = (id, operation) => {
+  favState = (song, operation) => {
     switch (operation) {
     case 'remove':
-      this.rmFav(id);
+      this.rmFav(song);
       break;
     default:
-      this.addFav(id);
+      this.addFav(song);
     }
   };
 
