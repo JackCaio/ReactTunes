@@ -1,13 +1,16 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import Header from '../components/Header';
+import Loading from '../components/Loading';
 import MusicCard from '../components/MusicCard';
+import { getFavoriteSongs } from '../services/favoriteSongsAPI';
 import getMusics from '../services/musicsAPI';
 
 export default class Album extends Component {
   constructor() {
     super();
     this.state = {
+      loading: true,
       songs: [],
       album: {},
       favSongs: [],
@@ -17,6 +20,7 @@ export default class Album extends Component {
   componentDidMount() {
     const { match: { params } } = this.props;
     this.fetchSongs(params.id);
+    this.fetchFavSongs();
   }
 
   fetchSongs = async (id) => {
@@ -27,6 +31,15 @@ export default class Album extends Component {
     });
   };
 
+  fetchFavSongs = async () => {
+    const favSongs = await getFavoriteSongs();
+    const favIds = favSongs.map((song) => song.trackId);
+    this.setState({
+      loading: false,
+      favSongs: [...favIds],
+    });
+  };
+
   addFav = (id) => {
     this.setState((prev) => ({
       favSongs: [...prev.favSongs, id],
@@ -34,10 +47,9 @@ export default class Album extends Component {
   };
 
   render() {
-    const { album, songs, favSongs } = this.state;
-    return (
-      <div data-testid="page-album">
-        <Header />
+    const { loading, album, songs, favSongs } = this.state;
+    const content = (
+      <>
         <h2 data-testid="artist-name">{album.artistName}</h2>
         <h4 data-testid="album-name">{album.collectionName}</h4>
         {songs.map((song) => (
@@ -48,6 +60,12 @@ export default class Album extends Component {
             isFav={ favSongs.includes(song.trackId) }
           />
         ))}
+      </>
+    );
+    return (
+      <div data-testid="page-album">
+        <Header />
+        {loading ? <Loading /> : content}
       </div>
     );
   }
