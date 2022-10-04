@@ -9,33 +9,32 @@ export default class Album extends Component {
     super();
     this.state = {
       songs: [],
-      artist: '',
+      album: {},
     };
   }
 
   componentDidMount() {
-    this.fetchSongs();
+    const { match: { params } } = this.props;
+    this.fetchSongs(params.id);
   }
 
-  fetchSongs = async () => {
-    const { match: { params } } = this.props;
-    const result = await getMusics(params.id);
-    const album = result.find((alb) => alb.wrapperType === 'collection');
-    const songs = result.filter((alb) => alb.wrapperType === 'track');
+  fetchSongs = async (id) => {
+    const result = await getMusics(id);
+    // const album = result.find((alb) => alb.wrapperType === 'collection');
+    // const songs = result.filter((alb) => alb.wrapperType === 'track');
     this.setState({
-      songs,
-      artist: album.artistName,
-      album: album.collectionName,
+      album: result[0],
+      songs: result.slice(1),
     });
   };
 
   render() {
-    const { artist, album, songs } = this.state;
+    const { album, songs } = this.state;
     return (
       <div data-testid="page-album">
         <Header />
-        <h2 data-testid="artist-name">{artist}</h2>
-        <h4 data-testid="album-name">{album}</h4>
+        <h2 data-testid="artist-name">{album.artistName}</h2>
+        <h4 data-testid="album-name">{album.collectionName}</h4>
         {songs.map((song) => <MusicCard key={ song.trackId } { ...song } />)}
       </div>
     );
