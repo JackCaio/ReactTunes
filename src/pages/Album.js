@@ -46,6 +46,24 @@ export default class Album extends Component {
     }));
   };
 
+  rmFav = (id) => {
+    const { favSongs } = this.state;
+    favSongs.splice(favSongs.indexOf(id), 1);
+    this.setState({
+      favSongs,
+    });
+  };
+
+  favState = (id, operation) => {
+    switch (operation) {
+    case 'remove':
+      this.rmFav(id);
+      break;
+    default:
+      this.addFav(id);
+    }
+  };
+
   render() {
     const { loading, album, songs, favSongs } = this.state;
     const content = (
@@ -56,7 +74,7 @@ export default class Album extends Component {
           <MusicCard
             key={ song.trackId }
             song={ song }
-            addFav={ this.addFav }
+            favState={ this.favState }
             isFav={ favSongs.includes(song.trackId) }
           />
         ))}

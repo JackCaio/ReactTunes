@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { addSong } from '../services/favoriteSongsAPI';
+import { addSong, removeSong } from '../services/favoriteSongsAPI';
 import Loading from './Loading';
 
 export default class MusicCard extends Component {
@@ -11,14 +11,28 @@ export default class MusicCard extends Component {
     };
   }
 
-  addFavorite = async (event) => {
+  addFavorite = async () => {
+    const { song, favState } = this.props;
+    this.setState({ loading: true });
+    favState(song.trackId, 'add');
+    await addSong(song);
+    this.setState({ loading: false });
+  };
+
+  removeFavorite = async () => {
+    const { song, favState } = this.props;
+    this.setState({ loading: true });
+    favState(song.trackId, 'remove');
+    await removeSong(song);
+    this.setState({ loading: false });
+  };
+
+  handleFavorites = (event) => {
     const { checked } = event.target;
-    const { song, addFav } = this.props;
     if (checked) {
-      this.setState({ loading: true });
-      addFav(song.trackId);
-      await addSong(song);
-      this.setState({ loading: false });
+      this.addFavorite();
+    } else {
+      this.removeFavorite();
     }
   };
 
@@ -41,7 +55,7 @@ export default class MusicCard extends Component {
             id={ `fav-${trackId}` }
             type="checkbox"
             data-testid={ `checkbox-music-${trackId}` }
-            onChange={ this.addFavorite }
+            onChange={ this.handleFavorites }
             checked={ isFav }
           />
         </label>
@@ -60,6 +74,6 @@ MusicCard.propTypes = {
     trackName: PropTypes.string,
     trackId: PropTypes.number,
   }).isRequired,
-  addFav: PropTypes.func.isRequired,
+  favState: PropTypes.func.isRequired,
   isFav: PropTypes.bool,
 };
