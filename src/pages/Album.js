@@ -10,6 +10,7 @@ export default class Album extends Component {
     this.state = {
       songs: [],
       album: {},
+      favSongs: [],
     };
   }
 
@@ -20,22 +21,33 @@ export default class Album extends Component {
 
   fetchSongs = async (id) => {
     const result = await getMusics(id);
-    // const album = result.find((alb) => alb.wrapperType === 'collection');
-    // const songs = result.filter((alb) => alb.wrapperType === 'track');
     this.setState({
       album: result[0],
       songs: result.slice(1),
     });
   };
 
+  addFav = (id) => {
+    this.setState((prev) => ({
+      favSongs: [...prev.favSongs, id],
+    }));
+  };
+
   render() {
-    const { album, songs } = this.state;
+    const { album, songs, favSongs } = this.state;
     return (
       <div data-testid="page-album">
         <Header />
         <h2 data-testid="artist-name">{album.artistName}</h2>
         <h4 data-testid="album-name">{album.collectionName}</h4>
-        {songs.map((song) => <MusicCard key={ song.trackId } { ...song } />)}
+        {songs.map((song) => (
+          <MusicCard
+            key={ song.trackId }
+            song={ song }
+            addFav={ this.addFav }
+            isFav={ favSongs.includes(song.trackId) }
+          />
+        ))}
       </div>
     );
   }
